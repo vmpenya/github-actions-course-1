@@ -127,6 +127,18 @@ We can create our own entrypoint scripts in the project, and use them in the con
 ```
 
 ## Sending a Slask Message Using a Docker Container
+
+This is an example using an specific docker image to send a message to a slack webhook. I copy the code here just for reference:
+
+```yaml
+            - name: Send a slack message
+              uses: docker://technosophos/slack-notify
+              env:
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: From Github Actions
+                SLACK_MESSAGE: "Actor: ${{github.actor}}, Event: ${{github.event_name}}"
+                SLACK_COLOR: "#723fc4"
+```
 ## An Overview to a Simple NodeJS Application
 ## Using Service Containers in Github Actions
 ## Publishing Docker Images Using Github Actions
