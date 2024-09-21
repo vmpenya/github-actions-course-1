@@ -108,6 +108,24 @@ Containers used in the same job share the same network. Also working directory i
 
 ## Creating a Custom Docker Entrypoint Script
 
+We can create our own entrypoint scripts in the project, and use them in the container.
+
+1. First we create the entrypoint file. For example a bash script.
+2. This file must be executable. This can be done by default linux command chmod +x filename.
+3. We must do a checkout to have our files available inside of the container. For example with **actions/checkout**.
+4. Inside the job we specify th new entrypoint as the file we just created. For example:
+
+```yaml
+            # First, the checkout
+            - uses: actions/checkout@v3
+            # now we use our own script as an entrypoint for the container
+            - name: Run a bash script
+              uses: docker://node:20-alpine3.20
+              with:
+                entrypoint: ./script.sh     # this file must be executable (chmod +x filename)
+                args: "Alguna cadena rara que te he puesto porque es un ejemplo pero me he aburrio describir en ingles"
+```
+
 ## Sending a Slask Message Using a Docker Container
 ## An Overview to a Simple NodeJS Application
 ## Using Service Containers in Github Actions
