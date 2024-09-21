@@ -21,7 +21,7 @@ jobs:
 #                - vol_name:/patrh/in/container
 #                - /path/to/container
 #                - /path/in/host:/path/in/container
-            options: --cpus 1           # every options in docker create (except network realted ones)
+#            options: --cpus 1           # every options in docker create (except network realted ones)
 
         steps:
             - name: Log Node & OS Versions
@@ -30,4 +30,14 @@ jobs:
                 cat /etc/os-release
             - name: Log Env
               run: echo $API_URL
+            - name: Container in a Step
+              uses: docker://node:20-alpine3.20
+              with:
+                # overrides the entrypoint if necessary
+                entrypoint: /usr/local/bin/node
+                args: -p 2+3
+            - name: Container in a Step
+              uses: docker://node:20-alpine3.20
+              with:
+                args: -v             
 
