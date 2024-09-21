@@ -46,5 +46,12 @@ jobs:
               uses: docker://node:20-alpine3.20
               with:
                 entrypoint: cat
-                args: text.txt                      
+                args: text.txt    
+            - uses: actions/checkout@v3
+            - name: Run a bash script
+              uses: docker://node:20-alpine3.20
+              with:
+                entrypoint: ./script.sh     # this file must be executable (chmod +x filename)
+                args: "Alguna cadena rara que te he puesto porque es un ejemplo pero me he aburrio describir en ingles"
+
 
