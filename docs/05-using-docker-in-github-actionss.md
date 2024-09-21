@@ -101,8 +101,12 @@ jobs:
 In the example we have a container at job level, but in the last two steps we specified another container. For the last step no entrypoint is provided, so the default is used (in this case node is executed with the argument -v).
 
 
-
 ## Exploring Shared Networks & Volumes Between Multiple Containers
+
+Containers used in the same job share the same network. Also working directory is shared between containers. This means that anything we create in the working directory of one container is accesible for the others containers in the same job (because they are sharing the same volume mounts).
+
+
+
 ## Creating a Custom Docker Entrypoint Script
 ## Sending a Slask Message Using a Docker Container
 ## An Overview to a Simple NodeJS Application
