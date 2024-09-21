@@ -103,8 +103,7 @@ In the example we have a container at job level, but in the last two steps we sp
 
 ## Exploring Shared Networks & Volumes Between Multiple Containers
 
-Containers used in the same job share the same network. Also working directory is shared between containers. This means that anything we create in the working directory of one container is accesible for the others containers in the same job (because they are sharing the same volume mounts).
-
+Containers used in the same job share the same network. Also working directory is shared between containers. This means that anything we create in the working directory of one container is accesible for the others containers in the same job (because they are sharing the same volume mounts). We can create files with one container, and read them, or modify them, in another one.
 
 
 ## Creating a Custom Docker Entrypoint Script
