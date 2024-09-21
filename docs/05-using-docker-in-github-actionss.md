@@ -126,7 +126,7 @@ We can create our own entrypoint scripts in the project, and use them in the con
                 args: "Alguna cadena rara que te he puesto porque es un ejemplo pero me he aburrio describir en ingles"
 ```
 
-## Sending a Slask Message Using a Docker Container
+## Sending a Slack Message Using a Docker Container
 
 This is an example using an specific docker image to send a message to a slack webhook. I copy the code here just for reference:
 
@@ -140,5 +140,62 @@ This is an example using an specific docker image to send a message to a slack w
                 SLACK_COLOR: "#723fc4"
 ```
 ## An Overview to a Simple NodeJS Application
+
+This is just an example of common docker info.
+
+
+We will need to review this two in the future:
+
 ## Using Service Containers in Github Actions
 ## Publishing Docker Images Using Github Actions
+
+https://github.com/docker/login-action
+https://github.com/docker/metadata-action
+https://github.com/docker/build-push-action
+
+
+```yaml
+name: Build & Publish Docker Image
+on:
+  release:
+    types: [published]
+
+jobs:
+  push-to-dockerhub-and-GHCR:
+    runs-on: ubuntu-latest
+    # This permissions are needed for saving the package to GHCR
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}      
+      - name: Extract Metadata
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            alialaa17/simple-node-api
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Build  Publish Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+```
