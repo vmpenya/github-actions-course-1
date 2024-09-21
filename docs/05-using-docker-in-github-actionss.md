@@ -47,6 +47,61 @@ jobs:
 ```
 
 ## Using Docker Containers in Steps
+
+Different containers running in the same workflow are sibling containers, and share the same network.
+
+
+We can specify a container inside a step with the uses key. We can override the default entrypoint of the container with de **entrypoint** keyword inside with.
+
+```yaml
+name: Docker
+on: [workflow_dispatch]
+
+jobs:
+    docker-job: 
+        runs-on: ubuntu-latest
+        # By default uses dockerhub so you just need to chose the image and version.
+        # For using another registry you must put the complete registry name
+        #     for example, ghcr.io/owner/image 
+        container: 
+            image: node:22-alpine3.19
+            # If we use a private image we will need to provide credentials
+            # credentials:
+            #     username:
+            #     password:
+            env:
+                API_URL: some-url.com
+            ports:
+                - 80
+#            volumes:
+#                - vol_name:/patrh/in/container
+#                - /path/to/container
+#                - /path/in/host:/path/in/container
+#            options: --cpus 1           # every options in docker create (except network realted ones)
+
+        steps:
+            - name: Log Node & OS Versions
+              run: |
+                node -v
+                cat /etc/os-release
+            - name: Log Env
+              run: echo $API_URL
+            - name: Container in a Step
+              uses: docker://node:20-alpine3.20
+              with:
+                # overrides the entrypoint if necessary
+                entrypoint: /usr/local/bin/node
+                args: -p 2+3
+            - name: Container in a Step
+              uses: docker://node:20-alpine3.20
+              with:
+                args: -v             
+```
+
+In the example we have a container at job level, but in the last two steps we specified another container. For the last step no entrypoint is provided, so the default is used (in this case node is executed with the argument -v).
+
+
+
 ## Exploring Shared Networks & Volumes Between Multiple Containers
 ## Creating a Custom Docker Entrypoint Script
 ## Sending a Slask Message Using a Docker Container
