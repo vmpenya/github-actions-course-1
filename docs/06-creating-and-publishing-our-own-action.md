@@ -21,5 +21,94 @@ Actions can be public (that are in a public repository and so are accesible by e
 
 ## Creating a Simple JavaScript Action
 
-github.com/actions/toolkit
+We can use this toolkit for creating our action: github.com/actions/toolkit.
+
+For creating new actions we must create a folder in our project inside .github/actions. For example, for a hello world action we can create a .github/actions/hello folder.
+
+This folder must contain:
+- A action.yaml file in which we will configure the action.
+- All JS files needed.
+
+Let's see one example:
+
+```yaml
+name: Hello World
+author: VP
+description: "Greet someone and record the time"
+inputs:
+  who_to_greet:
+    description: "Who to greet"
+    required: true
+    default: "World"
+outputs:
+  time:
+    description: The time of the greeting
+runs:
+  using: "node20"
+  main: dist/index.js
+  pre: setup.js
+  pre-if: runner.os === "linux"
+  post: cleanup.js
+  post-if: runner.os == 'linux'
+```
+
+This file has different options:
+- name: name or title of the action
+- author: author of the action
+- description: brief description
+- inputs: inputs needed by the action
+- outputs: outputs that will create the action
+- runs: here we configure what will be executed
+  - using: version of node used.
+  - main: javascript file that will be executed executed
+  - pre: we can set another JS file for executing before de main.
+  - post: we can set another JS file for executing after finishing, for clean up and so.
+  - pre-if and post-if: we can set conditions that will prevent de pre and post steps to be executed.
+
+Let's see examples of this JS files.
+
+```js
+// require objects from github toolkit for using them in the action
+const core = require("@actions/core");
+const github = require("@actions/github");
+
+
+try {
+  // throw new Error('Some error message');
+
+  // create a debug message, a warning and an error message
+  core.debug('Debug Message');
+  core.warning('Warning Message');
+  core.error('Error Message');
+  
+  // This shows how to recover an input 
+  const name = core.getInput('who_to_greet');
+  console.log(`Hello ${name}`);
+
+  // This shows how to create an output
+  const time = Date();
+  core.setOutput("time", time.toString());
+
+  // We can also export variables
+  core.exportVariable("HELLO_TIME", time);
+
+  // We can even create logging roups, and use the contexts
+  core.startGroup("Logging github context");
+  console.log(JSON.stringify(github.context, null, 2));
+  core.endGroup();
+
+  // This shows how to control one error in the execution
+} catch(error) {
+  core.setFailed(error.message);
+}
+```
+
+It's common to compile all the project so we don´t need the required modules in the runner machine. We can do this with @vercel/ncc.
+
+## Creating a Simple Docker Action
+
+
+```yaml
+```
+
 
