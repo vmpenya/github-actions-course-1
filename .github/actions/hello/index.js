@@ -8,7 +8,7 @@ try {
   core.error('Error Message');
   
   const name = core.getInput('who_to_greet');
-  console.log(`Hello {name}`);
+  console.log(`Hello ${name}`);
 
   const time = Date();
   core.setOutput("time", time.toString());
