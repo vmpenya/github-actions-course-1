@@ -1,5 +1,4 @@
-# FROM alpine:3.19
-FROM ubuntu:24.04
+FROM alpine:3.19
 COPY cleanup.sh /cleanup.sh
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ] 
