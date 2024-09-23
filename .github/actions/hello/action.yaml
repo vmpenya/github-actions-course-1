@@ -13,6 +13,6 @@ runs:
   using: "node20"
   main: index.js
   pre: setup.js
-  pre-if: runner.os = 'linux'
+  pre-if: runner.os === 'linux'
   post: cleanup.js
-  post-if: runner.os = 'linux'
+  post-if: runner.os === 'linux'
