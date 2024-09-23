@@ -11,7 +11,7 @@ try {
   console.log(`Hello {name}`);
 
   const time = Date();
-  core.setOutput("time", time.toTimeString());
+  core.setOutput("time", time.toString());
 
   core.exportVariable("HELLO_TIME", time);
 
