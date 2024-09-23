@@ -3,6 +3,7 @@ const github = require("@actions/github");
 
 
 try {
+  throw new Error('Some error message');
   core.debug('Debug Message');
   core.warning('Warning Message');
   core.error('Error Message');
