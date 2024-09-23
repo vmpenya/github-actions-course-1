@@ -31096,6 +31096,7 @@ const github = __nccwpck_require__(4602);
 
 
 try {
+  throw new Error('Some error message');
   core.debug('Debug Message');
   core.warning('Warning Message');
   core.error('Error Message');
