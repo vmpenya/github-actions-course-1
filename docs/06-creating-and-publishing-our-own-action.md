@@ -105,6 +105,31 @@ try {
 
 It's common to compile all the project so we don´t need the required modules in the runner machine. We can do this with @vercel/ncc.
 
+We can call this action very easily in a workflow:
+
+```yaml
+name: Simple Action
+on: [push]
+
+jobs:
+  simple-action:
+    runs-on: ubuntu-latest
+    steps:
+      # We need to checkout the project
+      - uses: actions/checkout@v3
+      # This is where we call the created action. 
+      - name: Simple JS Action
+        id: greet
+        uses: ./.github/actions/hello
+        with:
+          who_to_greet: Víctor
+      # In this steps we use the output and environment variable created by our action
+      - name: Log Greeting Time
+        run: echo "${{ steps.greet.outputs.time }}"
+      - name: Log ENV Var
+        run: echo $HELLO_TIME
+```
+
 ## Creating a Simple Docker Action
 
 
