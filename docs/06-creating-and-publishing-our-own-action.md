@@ -132,8 +132,114 @@ jobs:
 
 ## Creating a Simple Docker Action
 
+We can create Actions that are executed inside a Docker container. In this case some things change:
+
+Firts, let's see the the **action.yaml** file:
 
 ```yaml
+name: Hello World
+author: VP
+description: "Greet someone and record the time"
+inputs:
+  who_to_greet:
+    description: "Who to greet"
+#    required: true
+    default: "World"
+outputs:
+  time:
+    description: The time of the greeting
+runs:
+  using: "docker"
+  # A remote image can be used
+  # image: 'docker://node:22-alpine3.19'
+  # Also a local one
+  image: 'Dockerfile'
+  # Override image defined in the local Dockerfile
+  # entrypoint: 
+  # Override the command of the dockerfile
+  args:
+    # use an exrepssion for getting the input
+    - ${{ inputs.who_to_greet }}
+  env:
+    HELLO: WORLD
+  post-entrypoint: "/cleanup.sh"
+  post-if: runner.os == 'linux'
 ```
 
+Some changes must be commented:
+
+In the **runs** object we find:
+- **image**. We can use a docker hub image or a local one (created by a Dockerfile).
+- **args**. We can use args for providing the inputs of the action. In this case we use an expression for providing the first arg.
+- **env**. We can also provide environment variables as another way to provide inputs to the action.
+- **post-entrypoint** and **post-if** are executed just before de action finish.
+
+This action is called as you can see in the next workflow yaml file:
+
+```yaml
+name: Simple Action
+on: [push]
+
+jobs:
+  simple-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # Here is the call
+      - name: Simple Docker Action
+        id: greet
+        uses: ./.github/actions/hello-docker
+        with:
+          who_to_greet: Víctor
+      - name: Log Greeting Time
+        run: echo "${{ steps.greet.outputs.time }}"
+      - name: Log ENV Var
+        run: echo $HELLO_TIME
+```
+
+The code, in the example, is a sh script. Let's see it and analize:
+
+```sh
+#!bin/sh
+
+# Create a debug message
+echo "::debug::Running entrypoint.sh"
+
+# This is a warning message
+echo "::warning::This is a warning"
+
+# This is an error message
+echo "::error::This is an error message"
+
+# Here we use the first argument
+echo "Hello $1"
+
+# We can access the inputs as environment variables with the format INPUT_NAME_OF_INPUT
+echo "INPUT_WHO_TO_GREET: $INPUT_WHO_TO_GREET"
+
+# Another env variable example
+echo "HELLO: $HELLO"
+
+time=$(date)
+
+# This is an output example
+echo "time=$time" >> $GITHUB_OUTPUT
+
+# And this is an output environment variable
+echo "HELLO_TIME=$time" >> $GITHUB_ENV
+```
+For failing the action in this case you can use **exit 1**.
+Finally we will need a Dockerfile.
+
+```dockerfile
+FROM alpine:3.19
+COPY cleanup.sh /cleanup.sh
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ] 
+CMD [ "World" ]
+```
+
+We configure the *entrypoint.sh* file as the entrypoint of the container.
+
+## Composite Actions
 
